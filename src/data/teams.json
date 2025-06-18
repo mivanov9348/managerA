@@ -1,0 +1,122 @@
+[
+    {
+        "league": "Bulgarian League",
+        "teams": [
+            { "name": "Levski", "attack": 7, "defense": 6 },
+            { "name": "CSKA", "attack": 6, "defense": 7 },
+            { "name": "Ludogorets", "attack": 8, "defense": 8 },
+            { "name": "Botev Plovdiv", "attack": 6, "defense": 5 },
+            { "name": "Cherno More", "attack": 5, "defense": 6 },
+            { "name": "Slavia Sofia", "attack": 5, "defense": 5 },
+            { "name": "Lokomotiv Plovdiv", "attack": 6, "defense": 6 },
+            { "name": "Arda", "attack": 5, "defense": 5 },
+            { "name": "Beroe", "attack": 5, "defense": 5 },
+            { "name": "Pirin Blagoevgrad", "attack": 4, "defense": 4 },
+            { "name": "Hebar", "attack": 4, "defense": 4 },
+            { "name": "Lokomotiv Sofia", "attack": 5, "defense": 4 },
+            { "name": "Etar", "attack": 4, "defense": 4 },
+            { "name": "Krumovgrad", "attack": 4, "defense": 4 },
+            { "name": "Botev Vratsa", "attack": 4, "defense": 3 },
+            { "name": "Septemvri Sofia", "attack": 3, "defense": 3 }
+        ]
+    },
+    {
+        "league": "Premier League",
+        "teams": [
+            { "name": "Manchester City", "attack": 9, "defense": 9 },
+            { "name": "Liverpool", "attack": 8, "defense": 8 },
+            { "name": "Arsenal", "attack": 8, "defense": 7 },
+            { "name": "Chelsea", "attack": 7, "defense": 7 },
+            { "name": "Manchester United", "attack": 7, "defense": 6 },
+            { "name": "Tottenham", "attack": 7, "defense": 6 },
+            { "name": "Newcastle", "attack": 7, "defense": 7 },
+            { "name": "Aston Villa", "attack": 7, "defense": 6 },
+            { "name": "Brighton", "attack": 7, "defense": 6 },
+            { "name": "West Ham", "attack": 6, "defense": 6 },
+            { "name": "Crystal Palace", "attack": 6, "defense": 6 },
+            { "name": "Wolves", "attack": 6, "defense": 5 },
+            { "name": "Fulham", "attack": 6, "defense": 5 },
+            { "name": "Brentford", "attack": 6, "defense": 5 },
+            { "name": "Everton", "attack": 5, "defense": 5 },
+            { "name": "Bournemouth", "attack": 5, "defense": 5 },
+            { "name": "Nottingham Forest", "attack": 5, "defense": 5 },
+            { "name": "Burnley", "attack": 4, "defense": 4 },
+            { "name": "Sheffield United", "attack": 4, "defense": 4 },
+            { "name": "Luton Town", "attack": 4, "defense": 4 }
+        ]
+    },
+    {
+        "league": "La Liga",
+        "teams": [
+            { "name": "Real Madrid", "attack": 9, "defense": 9 },
+            { "name": "Barcelona", "attack": 9, "defense": 8 },
+            { "name": "Atletico Madrid", "attack": 8, "defense": 8 },
+            { "name": "Sevilla", "attack": 7, "defense": 7 },
+            { "name": "Real Sociedad", "attack": 7, "defense": 7 },
+            { "name": "Villarreal", "attack": 7, "defense": 7 },
+            { "name": "Real Betis", "attack": 7, "defense": 6 },
+            { "name": "Athletic Bilbao", "attack": 7, "defense": 6 },
+            { "name": "Valencia", "attack": 6, "defense": 6 },
+            { "name": "Osasuna", "attack": 6, "defense": 6 },
+            { "name": "Celta Vigo", "attack": 6, "defense": 5 },
+            { "name": "Getafe", "attack": 5, "defense": 5 },
+            { "name": "Alaves", "attack": 5, "defense": 5 },
+            { "name": "Rayo Vallecano", "attack": 5, "defense": 5 },
+            { "name": "Mallorca", "attack": 5, "defense": 5 },
+            { "name": "Las Palmas", "attack": 4, "defense": 5 },
+            { "name": "Granada", "attack": 4, "defense": 4 },
+            { "name": "Cadiz", "attack": 4, "defense": 4 },
+            { "name": "Almeria", "attack": 4, "defense": 4 },
+            { "name": "Girona", "attack": 6, "defense": 6 }
+        ]
+    },
+    {
+        "league": "Serie A",
+        "teams": [
+            { "name": "Juventus", "attack": 8, "defense": 8 },
+            { "name": "Inter Milan", "attack": 8, "defense": 8 },
+            { "name": "AC Milan", "attack": 8, "defense": 7 },
+            { "name": "Napoli", "attack": 8, "defense": 7 },
+            { "name": "Roma", "attack": 7, "defense": 7 },
+            { "name": "Lazio", "attack": 7, "defense": 7 },
+            { "name": "Atalanta", "attack": 7, "defense": 7 },
+            { "name": "Fiorentina", "attack": 7, "defense": 6 },
+            { "name": "Torino", "attack": 6, "defense": 6 },
+            { "name": "Bologna", "attack": 6, "defense": 6 },
+            { "name": "Udinese", "attack": 6, "defense": 6 },
+            { "name": "Monza", "attack": 6, "defense": 5 },
+            { "name": "Sassuolo", "attack": 6, "defense": 5 },
+            { "name": "Empoli", "attack": 5, "defense": 5 },
+            { "name": "Cagliari", "attack": 5, "defense": 5 },
+            { "name": "Genoa", "attack": 5, "defense": 5 },
+            { "name": "Lecce", "attack": 5, "defense": 5 },
+            { "name": "Frosinone", "attack": 4, "defense": 4 },
+            { "name": "Hellas Verona", "attack": 4, "defense": 4 },
+            { "name": "Salernitana", "attack": 4, "defense": 4 }
+        ]
+    },
+    {
+        "league": "Bundesliga",
+        "teams": [
+            { "name": "Bayern Munich", "attack": 9, "defense": 9 },
+            { "name": "Borussia Dortmund", "attack": 8, "defense": 7 },
+            { "name": "RB Leipzig", "attack": 8, "defense": 7 },
+            { "name": "Bayer Leverkusen", "attack": 7, "defense": 7 },
+            { "name": "Union Berlin", "attack": 7, "defense": 7 },
+            { "name": "Freiburg", "attack": 7, "defense": 6 },
+            { "name": "Eintracht Frankfurt", "attack": 7, "defense": 6 },
+            { "name": "Wolfsburg", "attack": 6, "defense": 6 },
+            { "name": "Mainz", "attack": 6, "defense": 6 },
+            { "name": "Borussia Monchengladbach", "attack": 6, "defense": 5 },
+            { "name": "Werder Bremen", "attack": 6, "defense": 5 },
+            { "name": "Augsburg", "attack": 5, "defense": 5 },
+            { "name": "VfB Stuttgart", "attack": 5, "defense": 5 },
+            { "name": "Bochum", "attack": 5, "defense": 4 },
+            { "name": "Hoffenheim", "attack": 6, "defense": 5 },
+            { "name": "Heidenheim", "attack": 4, "defense": 4 },
+            { "name": "Darmstadt", "attack": 4, "defense": 4 },
+            { "name": "Koln", "attack": 5, "defense": 5 }
+        ]
+    }
+]
+
