@@ -20,8 +20,7 @@ const TeamsPage = () => {
   useEffect(() => {
     const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedData) {
-      const parsed = JSON.parse(savedData);
-      setPlayersByTeam(parsed);
+      setPlayersByTeam(JSON.parse(savedData));
       return;
     }
 
@@ -34,8 +33,7 @@ const TeamsPage = () => {
 
     setPlayersByTeam(newPlayers);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newPlayers));
-
-}, []);
+  }, []);
 
   const handleSort = (key) => {
     let newDirection = "asc";
@@ -48,12 +46,10 @@ const TeamsPage = () => {
   const getSortedPlayers = (players) => {
     if (!sortConfig.key) return players;
     return [...players].sort((a, b) => {
-      if (a[sortConfig.key] < b[sortConfig.key]) {
+      if (a[sortConfig.key] < b[sortConfig.key])
         return sortConfig.direction === "asc" ? -1 : 1;
-      }
-      if (a[sortConfig.key] > b[sortConfig.key]) {
+      if (a[sortConfig.key] > b[sortConfig.key])
         return sortConfig.direction === "asc" ? 1 : -1;
-      }
       return 0;
     });
   };
@@ -73,78 +69,109 @@ const TeamsPage = () => {
     return base[position] || "";
   };
 
+  const selectedLeague = teamsData.find((league) =>
+    league.teams.some((team) => team.name === selectedTeam)
+  );
+
   return (
-    <div className="p-5 max-w-4xl mx-auto font-sans bg-gray-100">
-      <h2 className="text-xl font-bold mb-4">Select a Team</h2>
-      <select
-        onChange={(e) => setSelectedTeam(e.target.value)}
-        defaultValue=""
-        className="mb-4 p-2 rounded text-base"
-      >
-        <option value="" disabled>
-          -- Choose a team --
-        </option>
-        {teamsData.flatMap((league) =>
-          league.teams.map((team) => (
-            <option key={team.name} value={team.name}>
-              {league.league} - {team.name}
-            </option>
-          ))
+    <div className="p-6 max-w-5xl mx-auto font-sans bg-gray-50 min-h-screen">
+      <h2 className="text-3xl font-bold text-center mb-6 animate-fade-in-up">
+        🏟️ Squad
+      </h2>
+
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+        <select
+          onChange={(e) => setSelectedTeam(e.target.value)}
+          defaultValue=""
+          className="p-3 rounded border border-gray-300 shadow-sm w-full sm:w-auto"
+        >
+          <option value="" disabled>
+            -- Choose a team --
+          </option>
+          {teamsData.flatMap((league) =>
+            league.teams.map((team) => (
+              <option key={team.name} value={team.name}>
+                {league.league} - {team.name}
+              </option>
+            ))
+          )}
+        </select>
+
+        {selectedTeam && (
+          <div className="p-3 bg-white rounded shadow text-sm text-gray-700">
+            <span className="font-semibold">League:</span>{" "}
+            {selectedLeague?.league} <br />
+            <span className="font-semibold">Team:</span> {selectedTeam}
+          </div>
         )}
-      </select>
+      </div>
+
+      {!selectedTeam && (
+        <div className="text-center text-gray-500 italic">
+          Please select a team to view its squad.
+        </div>
+      )}
 
       {selectedTeam && playersByTeam[selectedTeam] && (
-        <div>
-          <h3 className="text-lg font-semibold mb-2">{selectedTeam} - Squad</h3>
-
-          <div className="mb-4">
-            <label className="mr-2">Filter by position:</label>
-            <select
-              value={filterPosition}
-              onChange={(e) => setFilterPosition(e.target.value)}
-              className="p-2 rounded text-base"
-            >
-              <option value="All">All</option>
-              {POSITIONS.map(({ type }) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+        <div className="animate-fade-in">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+            <h3 className="text-2xl font-semibold">{selectedTeam} </h3>
+            <div>
+              <label className="mr-2">Filter by position:</label>
+              <select
+                value={filterPosition}
+                onChange={(e) => setFilterPosition(e.target.value)}
+                className="p-2 rounded border border-gray-300"
+              >
+                <option value="All">All</option>
+                {POSITIONS.map(({ type }) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <table className="w-full border-collapse bg-white shadow rounded overflow-hidden animate-fade-in">
-            <thead>
-              <tr className="bg-green-800 text-white text-center">
-                {["position", "name", "attack", "defense", "overall"].map((key) => (
-                  <th
-                    key={key}
-                    onClick={() => handleSort(key)}
-                    className="p-3 cursor-pointer hover:bg-green-700 transition"
-                  >
-                    {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
-                    {sortConfig.key === key && (sortConfig.direction === "asc" ? "↑" : "↓")}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {getFilteredPlayers(getSortedPlayers(playersByTeam[selectedTeam])).map((player) => (
-                <tr
-                  key={player.id}
-                  className={`text-center transition-transform duration-200 hover:scale-105 ${getRowStyle(
-                    player.position
-                  )}`}
-                >
-                  <td className="p-3">{player.position}</td>
-                  <td className="p-3">{player.name}</td>
-                  <td className="p-3">{player.attack}</td>
-                  <td className="p-3">{player.defense}</td>
-                  <td className="p-3">{player.overall}</td>
+          <div className="overflow-x-auto rounded shadow">
+            <table className="min-w-full border-collapse bg-white text-sm">
+              <thead>
+                <tr className="bg-green-700 text-white">
+                  {["position", "name", "attack", "defense", "overall"].map(
+                    (key) => (
+                      <th
+                        key={key}
+                        onClick={() => handleSort(key)}
+                        className="p-3 text-left cursor-pointer hover:bg-green-600 transition"
+                      >
+                        {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
+                        {sortConfig.key === key &&
+                          (sortConfig.direction === "asc" ? "↑" : "↓")}
+                      </th>
+                    )
+                  )}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {getFilteredPlayers(
+                  getSortedPlayers(playersByTeam[selectedTeam])
+                ).map((player) => (
+                  <tr
+                    key={player.id}
+                    className={`transition-transform duration-200 hover:scale-[1.02] ${getRowStyle(
+                      player.position
+                    )}`}
+                  >
+                    <td className="p-3">{player.position}</td>
+                    <td className="p-3">{player.name}</td>
+                    <td className="p-3">{player.attack}</td>
+                    <td className="p-3">{player.defense}</td>
+                    <td className="p-3">{player.overall}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
