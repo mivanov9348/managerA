@@ -1,15 +1,19 @@
+// ✅ UserGameStore.js
 import { create } from "zustand";
 import leagues from "../data/teams.json";
+import { simulateMatch } from "../utils/simulateMatch";
 
 const useUserGameStore = create((set, get) => {
   const defaultLeague = leagues[0];
 
   return {
+    // Данни
     leagues,
     currentLeague: defaultLeague.league,
     teams: defaultLeague.teams,
     selectedTeam: null,
 
+    // Статистика
     standings: defaultLeague.teams.map((team) => ({
       team: team.name,
       played: 0,
@@ -21,6 +25,10 @@ const useUserGameStore = create((set, get) => {
       points: 0,
     })),
 
+    // Текущ рунд
+    currentRound: 1,
+
+    // Методи
     setCurrentTeam: (team) => set({ selectedTeam: team, currentTeam: team }),
 
     setSelectedTeam: (teamName) => set({ selectedTeam: teamName }),
@@ -28,8 +36,6 @@ const useUserGameStore = create((set, get) => {
     setLeague: (leagueName) => {
       const league = leagues.find((l) => l.league === leagueName);
       if (!league) return;
-
-    
 
       set({
         currentLeague: leagueName,
@@ -45,7 +51,62 @@ const useUserGameStore = create((set, get) => {
           points: 0,
         })),
         selectedTeam: null,
+        currentRound: 1,
       });
+    },
+
+    setCurrentRound: (round) => set({ currentRound: round }),
+
+    nextRound: () => set((state) => ({ currentRound: state.currentRound + 1 })),
+
+    simulateRound: () => {
+      const state = get();
+      const fixturesByLeague = JSON.parse(localStorage.getItem("fixturesByLeague")) || {};
+      const playersByTeam = JSON.parse(localStorage.getItem("playersByTeam")) || {};
+      const leagueFixtures = fixturesByLeague[state.currentLeague] || [];
+      const matchesThisRound = leagueFixtures.filter(
+        (f) => f.round === state.currentRound
+      );
+
+      const updatedStandings = [...state.standings];
+      const matchResults = [];
+
+      matchesThisRound.forEach((match) => {
+        const result = simulateMatch(match.home, match.away, playersByTeam);
+        matchResults.push(result);
+
+        const home = updatedStandings.find((t) => t.team === match.home);
+        const away = updatedStandings.find((t) => t.team === match.away);
+
+        home.played += 1;
+        away.played += 1;
+        home.goalsScored += result.homeScore;
+        home.goalsAgainst += result.awayScore;
+        away.goalsScored += result.awayScore;
+        away.goalsAgainst += result.homeScore;
+
+        if (result.homeScore > result.awayScore) {
+          home.wins += 1;
+          away.losses += 1;
+          home.points += 3;
+        } else if (result.awayScore > result.homeScore) {
+          away.wins += 1;
+          home.losses += 1;
+          away.points += 3;
+        } else {
+          home.draws += 1;
+          away.draws += 1;
+          home.points += 1;
+          away.points += 1;
+        }
+      });
+
+      localStorage.setItem(
+        `matchResults_${state.currentRound}_${state.currentLeague}`,
+        JSON.stringify(matchResults)
+      );
+
+      set({ standings: updatedStandings }); // ❗ НЕ вдигаме рунда автоматично
     },
   };
 });

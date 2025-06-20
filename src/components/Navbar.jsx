@@ -13,8 +13,8 @@ const Navbar = () => {
         <NavLink to="/standings" className="text-white hover:underline">Standings</NavLink>
         <NavLink to="/fixtures" className="text-white hover:underline">Fixtures</NavLink>
         <NavLink to="/next-match" className="text-white hover:underline">Next Match</NavLink>
-        <NavLink to="/teams" className="text-white hover:underline">Teams</NavLink>
-        <NavLink to="/squad" className="text-white hover:underline">Squad</NavLink>
+        <NavLink to="/squads" className="text-white hover:underline">Squads</NavLink>
+        <NavLink to="/stats" className="text-white hover:underline">Stats</NavLink>
       </div>
 
       {currentTeam && (
