@@ -23,7 +23,9 @@ export const generatePlayers = (teamName, addMessage) => {
         attack,
         defense,
         overall,
-        team: teamName, 
+        team: teamName,
+        goals: 0,
+        assists: 0,
       });
     }
   }

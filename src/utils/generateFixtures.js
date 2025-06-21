@@ -24,7 +24,13 @@ export const generateFixtures = (leagues) => {
         const away = allTeams[numTeams - 1 - i];
 
         if (home !== "BYE" && away !== "BYE") {
-          matches.push({ round: round + 1, home, away });
+          matches.push({
+            round: round + 1,
+            home,
+            away,
+            homeScore: null,
+            awayScore: null
+          });
         }
       }
 
@@ -36,12 +42,13 @@ export const generateFixtures = (leagues) => {
       allTeams = rotated;
     }
 
-    // Втора част на сезона - разменени домакини
     const reverseRounds = rounds.map((matches, i) =>
       matches.map((m) => ({
         round: i + 1 + numRounds,
         home: m.away,
         away: m.home,
+        homeScore: null,
+        awayScore: null
       }))
     );
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import useUserGameStore from "../store/UserGameStore";
 import { generatePlayers } from "../utils/generatePlayers";
 import { generateFixtures } from "../utils/generateFixtures";
@@ -9,6 +10,7 @@ const TeamSelectModal = () => {
   const [selectedTeam, setSelectedTeam] = useState("");
   const { gameStarted, leagues, currentTeam, setCurrentTeam, startSeason } =
     useUserGameStore();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const savedTeam = localStorage.getItem("selectedTeam");
@@ -27,11 +29,13 @@ const TeamSelectModal = () => {
     generateFixtures(teamsData);
     setShowModal(false);
     startSeason();
+    navigate("/"); // Redirect to Home after team selection
   };
 
   const handleContinue = () => {
     setShowModal(false);
     startSeason();
+    navigate("/"); // Optional: Redirect to Home on continue as well
   };
 
   const generateAllPlayers = () => {

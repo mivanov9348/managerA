@@ -95,7 +95,6 @@ export default function Fixtures() {
                 ))}
               </select>
 
-              {/* Навигационни стрелки */}
               {selectedRound !== "all" && (
                 <div className="flex items-center gap-2">
                   <button
@@ -123,9 +122,7 @@ export default function Fixtures() {
                 key={round}
                 className="bg-white border border-gray-200 shadow-md rounded-lg p-5 transition-transform hover:scale-[1.01]"
               >
-                <h3 className="text-xl font-semibold mb-4 text-blue-700">
-                  Round {round}
-                </h3>
+                <h3 className="text-xl font-semibold mb-4 text-blue-700">Round {round}</h3>
                 <ul className="space-y-2">
                   {groupedFixtures[round].map((match, idx) => (
                     <li
@@ -133,7 +130,13 @@ export default function Fixtures() {
                       className="flex justify-between items-center px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-dashed border-gray-200 rounded transition-colors"
                     >
                       <span className="font-medium text-gray-800">{match.home}</span>
-                      <span className="text-gray-500">vs</span>
+                      {match.homeScore != null && match.awayScore != null ? (
+                        <span className="text-gray-700 font-semibold">
+                          {match.homeScore} : {match.awayScore}
+                        </span>
+                      ) : (
+                        <span className="text-gray-500">vs</span>
+                      )}
                       <span className="font-medium text-gray-800">{match.away}</span>
                     </li>
                   ))}
@@ -143,9 +146,7 @@ export default function Fixtures() {
           </div>
         </>
       ) : (
-        <p className="text-center text-gray-500 italic">
-          No fixtures available. Start a game first.
-        </p>
+        <p className="text-center text-gray-500 italic">No fixtures available. Start a game first.</p>
       )}
     </div>
   );

@@ -5,8 +5,10 @@ export const getSelectedTeamData = () => {
   if (!selectedTeam) return null;
 
   const playersByTeam = JSON.parse(localStorage.getItem("playersByTeam")) || {};
-  const fixturesByLeague = JSON.parse(localStorage.getItem("fixturesByLeague")) || {};
-  const standingsByLeague = JSON.parse(localStorage.getItem("standingsByLeague")) || {};
+  const fixturesByLeague =
+    JSON.parse(localStorage.getItem("fixturesByLeague")) || {};
+  const standingsByLeague =
+    JSON.parse(localStorage.getItem("standingsByLeague")) || {};
 
   let leagueName = null;
 

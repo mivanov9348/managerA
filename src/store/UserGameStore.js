@@ -61,53 +61,86 @@ const useUserGameStore = create((set, get) => {
 
     simulateRound: () => {
       const state = get();
-      const fixturesByLeague = JSON.parse(localStorage.getItem("fixturesByLeague")) || {};
-      const playersByTeam = JSON.parse(localStorage.getItem("playersByTeam")) || {};
-      const leagueFixtures = fixturesByLeague[state.currentLeague] || [];
-      const matchesThisRound = leagueFixtures.filter(
-        (f) => f.round === state.currentRound
-      );
+      const fixturesByLeague =
+        JSON.parse(localStorage.getItem("fixturesByLeague")) || {};
+      const playersByTeam =
+        JSON.parse(localStorage.getItem("playersByTeam")) || {};
+      const standingsByLeague =
+        JSON.parse(localStorage.getItem("standingsByLeague")) || {};
 
-      const updatedStandings = [...state.standings];
-      const matchResults = [];
+      const updatedMatchResults = {};
+      const updatedStandingsByLeague = { ...standingsByLeague };
 
-      matchesThisRound.forEach((match) => {
-        const result = simulateMatch(match.home, match.away, playersByTeam);
-        matchResults.push(result);
+      // Симулирай всички лиги
+      for (const leagueName in fixturesByLeague) {
+        const leagueFixtures = fixturesByLeague[leagueName] || [];
+        const matchesThisRound = leagueFixtures.filter(
+          (f) => f.round === state.currentRound
+        );
 
-        const home = updatedStandings.find((t) => t.team === match.home);
-        const away = updatedStandings.find((t) => t.team === match.away);
+        const leagueStandings = [
+          ...(updatedStandingsByLeague[leagueName] || []),
+        ];
+        const results = [];
 
-        home.played += 1;
-        away.played += 1;
-        home.goalsScored += result.homeScore;
-        home.goalsAgainst += result.awayScore;
-        away.goalsScored += result.awayScore;
-        away.goalsAgainst += result.homeScore;
+        matchesThisRound.forEach((match) => {
+          const result = simulateMatch(match.home, match.away, playersByTeam);
+          results.push(result);
 
-        if (result.homeScore > result.awayScore) {
-          home.wins += 1;
-          away.losses += 1;
-          home.points += 3;
-        } else if (result.awayScore > result.homeScore) {
-          away.wins += 1;
-          home.losses += 1;
-          away.points += 3;
-        } else {
-          home.draws += 1;
-          away.draws += 1;
-          home.points += 1;
-          away.points += 1;
-        }
-      });
+          const home = leagueStandings.find((t) => t.team === match.home);
+          const away = leagueStandings.find((t) => t.team === match.away);
 
+          if (!home || !away) return;
+
+          home.played += 1;
+          away.played += 1;
+          home.goalsScored += result.homeScore;
+          home.goalsAgainst += result.awayScore;
+          away.goalsScored += result.awayScore;
+          away.goalsAgainst += result.homeScore;
+
+          if (result.homeScore > result.awayScore) {
+            home.wins += 1;
+            away.losses += 1;
+            home.points += 3;
+          } else if (result.awayScore > result.homeScore) {
+            away.wins += 1;
+            home.losses += 1;
+            away.points += 3;
+          } else {
+            home.draws += 1;
+            away.draws += 1;
+            home.points += 1;
+            away.points += 1;
+          }
+        });
+
+        updatedMatchResults[leagueName] = results;
+        updatedStandingsByLeague[leagueName] = leagueStandings;
+      }
+
+      // Запази всичко обратно в localStorage
+      localStorage.setItem("playersByTeam", JSON.stringify(playersByTeam));
       localStorage.setItem(
-        `matchResults_${state.currentRound}_${state.currentLeague}`,
-        JSON.stringify(matchResults)
+        "standingsByLeague",
+        JSON.stringify(updatedStandingsByLeague)
       );
 
-      set({ standings: updatedStandings }); // ❗ НЕ вдигаме рунда автоматично
+      for (const league in updatedMatchResults) {
+        localStorage.setItem(
+          `matchResults_${state.currentRound}_${league}`,
+          JSON.stringify(updatedMatchResults[league])
+        );
+      }
+
+      // Обнови standings само за текущата лига (визуално)
+      set({ standings: updatedStandingsByLeague[state.currentLeague] });
     },
+
+    goToNextRound: () =>
+      set((state) => ({
+        currentRound: state.currentRound + 1,
+      })),
   };
 });
 
