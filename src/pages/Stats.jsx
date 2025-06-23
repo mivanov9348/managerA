@@ -10,7 +10,21 @@ const Stats = () => {
     const allPlayers = Object.entries(playersByTeam).flatMap(([teamName, teamPlayers]) =>
       teamPlayers.map((p) => ({ ...p, team: teamName }))
     );
-    setPlayers(allPlayers);
+
+    // Начално сортиране: по голове, асистенции, рейтинг
+    const defaultSorted = [...allPlayers].sort((a, b) => {
+      const goalsA = a.goals || 0;
+      const goalsB = b.goals || 0;
+      if (goalsB !== goalsA) return goalsB - goalsA;
+
+      const assistsA = a.assists || 0;
+      const assistsB = b.assists || 0;
+      if (assistsB !== assistsA) return assistsB - assistsA;
+
+      return (b.overall || 0) - (a.overall || 0);
+    });
+
+    setPlayers(defaultSorted);
   }, []);
 
   const handleSort = (field) => {
@@ -22,19 +36,20 @@ const Stats = () => {
     }
   };
 
-  const sortedPlayers = [...players].sort((a, b) => {
-    if (!sortField) return 0;
-    const valA = a[sortField];
-    const valB = b[sortField];
+  const sortedPlayers = sortField
+    ? [...players].sort((a, b) => {
+        const valA = a[sortField] ?? 0;
+        const valB = b[sortField] ?? 0;
 
-    if (typeof valA === "string") {
-      return sortDirection === "asc"
-        ? valA.localeCompare(valB)
-        : valB.localeCompare(valA);
-    }
+        if (typeof valA === "string") {
+          return sortDirection === "asc"
+            ? valA.localeCompare(valB)
+            : valB.localeCompare(valA);
+        }
 
-    return sortDirection === "asc" ? valA - valB : valB - valA;
-  });
+        return sortDirection === "asc" ? valA - valB : valB - valA;
+      })
+    : players;
 
   const renderSortArrow = (field) =>
     sortField === field ? (sortDirection === "asc" ? " ▲" : " ▼") : "";
@@ -82,7 +97,7 @@ const Stats = () => {
             <tbody>
               {sortedPlayers.map((player, idx) => (
                 <tr
-                  key={player.id}
+                  key={player.id || `${player.name}-${idx}`}
                   className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 >
                   <td className="p-3">{idx + 1}</td>

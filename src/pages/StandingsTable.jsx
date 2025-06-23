@@ -1,12 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useUserGameStore from '../store/UserGameStore';
 
 const StandingsTable = () => {
-  const standings = useUserGameStore((state) => state.standings);
+  const standingsByLeague = useUserGameStore((state) => state.standingsByLeague);
   const currentLeague = useUserGameStore((state) => state.currentLeague);
   const leagues = useUserGameStore((state) => state.leagues);
   const setLeague = useUserGameStore((state) => state.setLeague);
   const selectedTeam = useUserGameStore((state) => state.selectedTeam);
+
+  const [sortedStandings, setSortedStandings] = useState([]);
+
+  // Сортирай standings по точки и голова разлика
+  const sortStandings = (teams) => {
+    return [...teams].sort((a, b) => {
+      if (b.points !== a.points) return b.points - a.points;
+      const goalDiffA = a.goalsScored - a.goalsAgainst;
+      const goalDiffB = b.goalsScored - b.goalsAgainst;
+      return goalDiffB - goalDiffA;
+    });
+  };
+
+  // Зареди класирането при промяна на лигата или след симулация
+  const loadStandings = () => {
+    const standings = standingsByLeague[currentLeague] || [];
+    setSortedStandings(sortStandings(standings));
+  };
+
+  useEffect(() => {
+    loadStandings();
+
+    const updateListener = () => loadStandings();
+    window.addEventListener('standingsUpdated', updateListener);
+    return () => window.removeEventListener('standingsUpdated', updateListener);
+  }, [standingsByLeague, currentLeague]);
 
   return (
     <div className="w-full max-w-[1200px] mx-auto my-10 px-4 font-sans">
@@ -49,10 +75,10 @@ const StandingsTable = () => {
           </thead>
 
           <tbody>
-            {standings.map((team, index) => {
+            {sortedStandings.map((team, index) => {
               const isSelected = team.team === selectedTeam;
               const isTop = index < 3;
-              const isBottom = index >= standings.length - 2;
+              const isBottom = index >= sortedStandings.length - 2;
 
               return (
                 <tr

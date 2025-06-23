@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { getSelectedTeamData } from "../utils/getSelectedTeamData";
+import useUserGameStore from "../store/UserGameStore"; // 👈 Добави това
 
 const Home = () => {
   const [teamData, setTeamData] = useState(null);
+  const currentRound = useUserGameStore((state) => state.currentRound); // 👈 Взимаме текущия кръг
 
   useEffect(() => {
     const data = getSelectedTeamData();
@@ -19,6 +21,11 @@ const Home = () => {
   }
 
   const { teamName, leagueName, players, standing, fixtures } = teamData;
+
+  // 👇 Филтрираме само бъдещи мачове
+  const upcomingFixtures = fixtures
+    .filter((f) => f.round >= currentRound)
+    .slice(0, 5);
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -67,7 +74,7 @@ const Home = () => {
       <div>
         <h3 className="text-2xl font-bold mb-4">Upcoming Fixtures</h3>
         <ul className="space-y-3">
-          {fixtures.slice(0, 5).map((match, idx) => {
+          {upcomingFixtures.map((match, idx) => {
             const isHome = match.home === teamName;
             const opponent = isHome ? match.away : match.home;
 

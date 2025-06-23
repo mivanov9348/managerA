@@ -6,13 +6,10 @@ import { updateStandings } from "../utils/updateStandings";
 const useUserGameStore = create((set, get) => {
   const defaultLeague = leagues[0];
 
-  return {
-    leagues,
-    currentLeague: defaultLeague.league,
-    teams: defaultLeague.teams,
-    selectedTeam: null,
-
-    standings: defaultLeague.teams.map((team) => ({
+  // Начално класиране по лиги
+  const initialStandingsByLeague = {};
+  leagues.forEach((league) => {
+    initialStandingsByLeague[league.league] = league.teams.map((team) => ({
       team: team.name,
       played: 0,
       wins: 0,
@@ -21,7 +18,17 @@ const useUserGameStore = create((set, get) => {
       goalsScored: 0,
       goalsAgainst: 0,
       points: 0,
-    })),
+    }));
+  });
+
+  return {
+    leagues,
+    currentLeague: defaultLeague.league,
+    teams: defaultLeague.teams,
+    selectedTeam: null,
+
+    standings: initialStandingsByLeague[defaultLeague.league],
+    standingsByLeague: initialStandingsByLeague,
 
     currentRound: 1,
 
@@ -33,21 +40,16 @@ const useUserGameStore = create((set, get) => {
       const league = leagues.find((l) => l.league === leagueName);
       if (!league) return;
 
+      const standingsByLeague =
+        JSON.parse(localStorage.getItem("standingsByLeague")) || initialStandingsByLeague;
+
       set({
         currentLeague: leagueName,
         teams: league.teams,
-        standings: league.teams.map((team) => ({
-          team: team.name,
-          played: 0,
-          wins: 0,
-          draws: 0,
-          losses: 0,
-          goalsScored: 0,
-          goalsAgainst: 0,
-          points: 0,
-        })),
+        standings: standingsByLeague[leagueName],
         selectedTeam: null,
         currentRound: 1,
+        standingsByLeague,
       });
     },
 
@@ -63,7 +65,9 @@ const useUserGameStore = create((set, get) => {
       const playersByTeam =
         JSON.parse(localStorage.getItem("playersByTeam")) || {};
       const standingsByLeague =
-        JSON.parse(localStorage.getItem("standingsByLeague")) || {};
+        JSON.parse(localStorage.getItem("standingsByLeague")) || {
+          ...state.standingsByLeague,
+        };
 
       const updatedFixturesByLeague = { ...fixturesByLeague };
       const updatedStandingsByLeague = { ...standingsByLeague };
@@ -83,7 +87,7 @@ const useUserGameStore = create((set, get) => {
         matchesThisRound.forEach((match) => {
           const result = simulateMatch(match.home, match.away, playersByTeam);
 
-          // Обнови мача във fixtures
+          // Обнови мача
           const matchIndex = updatedFixtures.findIndex(
             (m) =>
               m.round === match.round &&
@@ -101,7 +105,7 @@ const useUserGameStore = create((set, get) => {
             };
           }
 
-          // Обнови класирането чрез отделната функция
+          // Обнови класирането
           leagueStandings = updateStandings(leagueStandings, result);
         });
 
@@ -109,11 +113,22 @@ const useUserGameStore = create((set, get) => {
         updatedStandingsByLeague[leagueName] = leagueStandings;
       }
 
-      localStorage.setItem("fixturesByLeague", JSON.stringify(updatedFixturesByLeague));
+      // Запази всичко
+      localStorage.setItem(
+        "fixturesByLeague",
+        JSON.stringify(updatedFixturesByLeague)
+      );
+      localStorage.setItem(
+        "standingsByLeague",
+        JSON.stringify(updatedStandingsByLeague)
+      );
       localStorage.setItem("playersByTeam", JSON.stringify(playersByTeam));
-      localStorage.setItem("standingsByLeague", JSON.stringify(updatedStandingsByLeague));
 
-      set({ standings: updatedStandingsByLeague[state.currentLeague] });
+      // Обнови стора
+      set({
+        standings: updatedStandingsByLeague[state.currentLeague],
+        standingsByLeague: updatedStandingsByLeague,
+      });
     },
 
     goToNextRound: () =>
