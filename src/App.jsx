@@ -8,6 +8,7 @@ import TeamSelectModal from "./components/TeamSelectModal";
 import useUserGameStore from "./store/UserGameStore";
 import Squads from "./pages/Squads";
 import Stats from "./pages/Stats";
+import Transfers from "./pages/Transfers";
 
 function App() {
   const currentTeam = useUserGameStore((state) => state.currentTeam);
@@ -24,6 +25,7 @@ function App() {
           <Route path="/next-match" element={<NextMatch />} />
           <Route path="/squads" element={<Squads />} />
           <Route path="/stats" element={<Stats />} />
+          <Route path="/transfers" element={<Transfers />} />
         </Routes>
       </div>
     </Router>

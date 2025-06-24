@@ -9,12 +9,27 @@ const Navbar = () => {
   return (
     <nav className="flex justify-between items-center px-5 py-3 bg-neutral-900 text-white">
       <div className="flex gap-4 items-center">
-        <NavLink to="/" className="text-white hover:underline">Home</NavLink>
-        <NavLink to="/standings" className="text-white hover:underline">Standings</NavLink>
-        <NavLink to="/fixtures" className="text-white hover:underline">Fixtures</NavLink>
-        <NavLink to="/next-match" className="text-white hover:underline">Next Match</NavLink>
-        <NavLink to="/squads" className="text-white hover:underline">Squads</NavLink>
-        <NavLink to="/stats" className="text-white hover:underline">Stats</NavLink>
+        <NavLink to="/" className="text-white hover:underline">
+          Home
+        </NavLink>
+        <NavLink to="/standings" className="text-white hover:underline">
+          Standings
+        </NavLink>
+        <NavLink to="/fixtures" className="text-white hover:underline">
+          Fixtures
+        </NavLink>
+        <NavLink to="/next-match" className="text-white hover:underline">
+          Next Match
+        </NavLink>
+        <NavLink to="/squads" className="text-white hover:underline">
+          Squads
+        </NavLink>
+        <NavLink to="/stats" className="text-white hover:underline">
+          Stats
+        </NavLink>
+        <NavLink to="/transfers" className="text-white hover:underline">
+          Transfers
+        </NavLink>
       </div>
 
       {currentTeam && (
