@@ -16,13 +16,11 @@ export const generatePlayers = (teamName, addMessage) => {
       const overall = ((attack + defense) / 2).toFixed(2);
       players.push({
         id: faker.string.uuid(),
-        name: `${faker.person.firstName("male")} ${faker.person.lastName(
-          "male"
-        )}`,
+        name: `${faker.person.firstName("male")} ${faker.person.lastName("male")}`,
         position: type,
         attack,
         defense,
-        overall,
+        overall: Number(overall),
         team: teamName,
         goals: 0,
         assists: 0,

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import leagues from "../data/teams.json";
 import { simulateMatch } from "../utils/simulateMatch";
 import { updateStandings } from "../utils/updateStandings";
+import { generateFreeAgents } from "../utils/generateFreeAgents"; // добавено
 
 const useUserGameStore = create((set, get) => {
   const defaultLeague = leagues[0];
@@ -20,6 +21,11 @@ const useUserGameStore = create((set, get) => {
       points: 0,
     }));
   });
+
+  // Генерирай free agents ако ги няма
+  if (!localStorage.getItem("freeAgents")) {
+    generateFreeAgents(100);
+  }
 
   return {
     leagues,
@@ -87,7 +93,6 @@ const useUserGameStore = create((set, get) => {
         matchesThisRound.forEach((match) => {
           const result = simulateMatch(match.home, match.away, playersByTeam);
 
-          // Обнови мача
           const matchIndex = updatedFixtures.findIndex(
             (m) =>
               m.round === match.round &&
@@ -105,7 +110,6 @@ const useUserGameStore = create((set, get) => {
             };
           }
 
-          // Обнови класирането
           leagueStandings = updateStandings(leagueStandings, result);
         });
 
@@ -113,7 +117,6 @@ const useUserGameStore = create((set, get) => {
         updatedStandingsByLeague[leagueName] = leagueStandings;
       }
 
-      // Запази всичко
       localStorage.setItem(
         "fixturesByLeague",
         JSON.stringify(updatedFixturesByLeague)
@@ -124,7 +127,6 @@ const useUserGameStore = create((set, get) => {
       );
       localStorage.setItem("playersByTeam", JSON.stringify(playersByTeam));
 
-      // Обнови стора
       set({
         standings: updatedStandingsByLeague[state.currentLeague],
         standingsByLeague: updatedStandingsByLeague,
