@@ -2,7 +2,7 @@ import { create } from "zustand";
 import leagues from "../data/teams.json";
 import { simulateMatch } from "../utils/simulateMatch";
 import { updateStandings } from "../utils/updateStandings";
-import { generateFreeAgents } from "../utils/generateFreeAgents"; // добавено
+import { generateFreeAgents } from "../utils/generateFreeAgents";
 
 const useUserGameStore = create((set, get) => {
   const defaultLeague = leagues[0];
@@ -25,6 +25,17 @@ const useUserGameStore = create((set, get) => {
   // Генерирай free agents ако ги няма
   if (!localStorage.getItem("freeAgents")) {
     generateFreeAgents(100);
+  }
+
+  // Увери се, че няма играчи в отборите
+  if (!localStorage.getItem("playersByTeam")) {
+    const emptyPlayers = {};
+    leagues.forEach((league) => {
+      league.teams.forEach((team) => {
+        emptyPlayers[team.name] = [];
+      });
+    });
+    localStorage.setItem("playersByTeam", JSON.stringify(emptyPlayers));
   }
 
   return {
@@ -132,11 +143,6 @@ const useUserGameStore = create((set, get) => {
         standingsByLeague: updatedStandingsByLeague,
       });
     },
-
-    goToNextRound: () =>
-      set((state) => ({
-        currentRound: state.currentRound + 1,
-      })),
   };
 });
 

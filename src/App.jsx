@@ -9,6 +9,7 @@ import useUserGameStore from "./store/UserGameStore";
 import Squads from "./pages/Squads";
 import Stats from "./pages/Stats";
 import Transfers from "./pages/Transfers";
+import DraftPage from "./pages/DraftPage";
 
 function App() {
   const currentTeam = useUserGameStore((state) => state.currentTeam);
@@ -26,6 +27,7 @@ function App() {
           <Route path="/squads" element={<Squads />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/transfers" element={<Transfers />} />
+          <Route path="/draft" element={<DraftPage />} />
         </Routes>
       </div>
     </Router>

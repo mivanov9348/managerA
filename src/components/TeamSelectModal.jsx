@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import useUserGameStore from "../store/UserGameStore";
-import { generatePlayers } from "../utils/generatePlayers";
 import { generateFixtures } from "../utils/generateFixtures";
 import teamsData from "../data/teams.json";
 
@@ -10,7 +9,7 @@ const TeamSelectModal = () => {
   const [selectedTeam, setSelectedTeam] = useState("");
   const { gameStarted, leagues, currentTeam, setCurrentTeam, startSeason } =
     useUserGameStore();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedTeam = localStorage.getItem("selectedTeam");
@@ -25,27 +24,16 @@ const TeamSelectModal = () => {
     if (!selectedTeam) return;
     localStorage.setItem("selectedTeam", selectedTeam);
     setCurrentTeam(selectedTeam);
-    generateAllPlayers();
     generateFixtures(teamsData);
     setShowModal(false);
     startSeason();
-    navigate("/"); // Redirect to Home after team selection
+    navigate("/draft"); // ✅ Пренасочване към драфта
   };
 
   const handleContinue = () => {
     setShowModal(false);
     startSeason();
-    navigate("/"); // Optional: Redirect to Home on continue as well
-  };
-
-  const generateAllPlayers = () => {
-    const newPlayers = {};
-    teamsData.forEach((league) => {
-      league.teams.forEach((team) => {
-        newPlayers[team.name] = generatePlayers();
-      });
-    });
-    localStorage.setItem("playersByTeam", JSON.stringify(newPlayers));
+    navigate("/draft");
   };
 
   if (!showModal || gameStarted) return null;

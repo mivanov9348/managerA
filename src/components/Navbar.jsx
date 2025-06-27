@@ -30,6 +30,9 @@ const Navbar = () => {
         <NavLink to="/transfers" className="text-white hover:underline">
           Transfers
         </NavLink>
+        <NavLink to="/draft" className="text-white hover:underline">
+          Draft
+        </NavLink>
       </div>
 
       {currentTeam && (
