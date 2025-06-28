@@ -7,7 +7,6 @@ import { generateFreeAgents } from "../utils/generateFreeAgents";
 const useUserGameStore = create((set, get) => {
   const defaultLeague = leagues[0];
 
-  // Начално класиране по лиги
   const initialStandingsByLeague = {};
   leagues.forEach((league) => {
     initialStandingsByLeague[league.league] = league.teams.map((team) => ({
@@ -22,12 +21,10 @@ const useUserGameStore = create((set, get) => {
     }));
   });
 
-  // Генерирай free agents ако ги няма
   if (!localStorage.getItem("freeAgents")) {
     generateFreeAgents(100);
   }
 
-  // Увери се, че няма играчи в отборите
   if (!localStorage.getItem("playersByTeam")) {
     const emptyPlayers = {};
     leagues.forEach((league) => {
@@ -43,14 +40,16 @@ const useUserGameStore = create((set, get) => {
     currentLeague: defaultLeague.league,
     teams: defaultLeague.teams,
     selectedTeam: null,
+    currentTeam: null,
 
     standings: initialStandingsByLeague[defaultLeague.league],
     standingsByLeague: initialStandingsByLeague,
 
     currentRound: 1,
+    draftCompleted: false, // ✅ добавено
+    setDraftCompleted: (val) => set({ draftCompleted: val }), // ✅ добавено
 
     setCurrentTeam: (team) => set({ selectedTeam: team, currentTeam: team }),
-
     setSelectedTeam: (teamName) => set({ selectedTeam: teamName }),
 
     setLeague: (leagueName) => {
@@ -71,7 +70,6 @@ const useUserGameStore = create((set, get) => {
     },
 
     setCurrentRound: (round) => set({ currentRound: round }),
-
     nextRound: () => set((state) => ({ currentRound: state.currentRound + 1 })),
 
     simulateRound: () => {
@@ -128,14 +126,8 @@ const useUserGameStore = create((set, get) => {
         updatedStandingsByLeague[leagueName] = leagueStandings;
       }
 
-      localStorage.setItem(
-        "fixturesByLeague",
-        JSON.stringify(updatedFixturesByLeague)
-      );
-      localStorage.setItem(
-        "standingsByLeague",
-        JSON.stringify(updatedStandingsByLeague)
-      );
+      localStorage.setItem("fixturesByLeague", JSON.stringify(updatedFixturesByLeague));
+      localStorage.setItem("standingsByLeague", JSON.stringify(updatedStandingsByLeague));
       localStorage.setItem("playersByTeam", JSON.stringify(playersByTeam));
 
       set({
