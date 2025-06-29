@@ -9,12 +9,21 @@ const DraftPage = () => {
   const [playersByTeam, setPlayersByTeam] = useState({});
   const [sortBy, setSortBy] = useState("overall");
   const [sortDirection, setSortDirection] = useState("desc");
+  const [lastPickMessage, setLastPickMessage] = useState("");
   const navigate = useNavigate();
-
   const intervalRef = useRef(null);
 
   useEffect(() => {
-    const agents = JSON.parse(localStorage.getItem("freeAgents")) || [];
+    let agents = JSON.parse(localStorage.getItem("freeAgents"));
+    if (!agents || agents.length === 0) {
+      try {
+        const { generateFreeAgents } = require("../utils/generateFreeAgents");
+        generateFreeAgents(100);
+        agents = JSON.parse(localStorage.getItem("freeAgents")) || [];
+      } catch (err) {
+        console.error("Free agent generation failed", err);
+      }
+    }
     setFreeAgents(agents);
 
     const storedPlayers = JSON.parse(localStorage.getItem("playersByTeam")) || {};
@@ -27,10 +36,10 @@ const DraftPage = () => {
 
     intervalRef.current = setTimeout(() => {
       autoPickForTeam(teamName);
-    }, 2000);
+    }, 100); // 0.1 секунда
 
     return () => clearTimeout(intervalRef.current);
-  }, [currentTeamIndex]);
+  }, [currentTeamIndex, freeAgents]);
 
   const sortedPlayers = [...freeAgents].sort((a, b) => {
     const aVal = parseFloat(a[sortBy]);
@@ -53,6 +62,7 @@ const DraftPage = () => {
 
     setFreeAgents(updatedFreeAgents);
     setPlayersByTeam(updatedPlayersByTeam);
+    setLastPickMessage(`${teamName} избра ${player.name}`);
     setCurrentTeamIndex((prev) => (prev + 1) % teams.length);
   };
 
@@ -70,6 +80,7 @@ const DraftPage = () => {
 
     setFreeAgents(updatedFreeAgents);
     setPlayersByTeam(updatedPlayersByTeam);
+    setLastPickMessage(`${currentTeam} избра ${player.name}`);
     setCurrentTeamIndex((prev) => (prev + 1) % teams.length);
   };
 
@@ -103,8 +114,17 @@ const DraftPage = () => {
 
         <div className="w-3/4">
           <h2 className="text-xl font-bold mb-4">
-            {isYourTurn ? "Your Turn to Pick" : `Waiting for ${teams[currentTeamIndex]?.name}...`}
+            {isYourTurn
+              ? "Your Turn to Pick"
+              : `Waiting for ${teams[currentTeamIndex]?.name}...`}
           </h2>
+
+          {lastPickMessage && (
+            <div className="mb-4 text-sm text-green-700 font-medium bg-green-100 rounded p-2">
+              {lastPickMessage}
+            </div>
+          )}
+
           <div className="overflow-auto">
             <table className="w-full table-auto border-collapse">
               <thead>
@@ -141,32 +161,35 @@ const DraftPage = () => {
                   <th className="p-2"></th>
                 </tr>
               </thead>
+
               <tbody>
-                {isYourTurn
-                  ? sortedPlayers.map((player) => (
-                      <tr key={player.id} className="border-b hover:bg-gray-50">
-                        <td className="p-2 text-sm font-medium">{player.name}</td>
-                        <td className="p-2 text-sm">{player.position}</td>
-                        <td className="p-2 text-sm">{player.attack}</td>
-                        <td className="p-2 text-sm">{player.defense}</td>
-                        <td className="p-2 text-sm">{player.overall}</td>
-                        <td className="p-2">
-                          <button
-                            onClick={() => handlePick(player)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-full"
-                          >
-                            Pick
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  : (
-                    <tr>
-                      <td colSpan={6} className="p-4 text-center text-gray-500 text-sm italic">
-                        Waiting for other teams to pick...
+                {isYourTurn && sortedPlayers.length > 0 ? (
+                  sortedPlayers.map((player) => (
+                    <tr key={player.id} className="border-b hover:bg-gray-50">
+                      <td className="p-2 text-sm font-medium">{player.name}</td>
+                      <td className="p-2 text-sm">{player.position}</td>
+                      <td className="p-2 text-sm">{player.attack}</td>
+                      <td className="p-2 text-sm">{player.defense}</td>
+                      <td className="p-2 text-sm">{player.overall}</td>
+                      <td className="p-2">
+                        <button
+                          onClick={() => handlePick(player)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-full"
+                        >
+                          Pick
+                        </button>
                       </td>
                     </tr>
-                  )}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="p-4 text-center text-gray-500 text-sm italic">
+                      {isYourTurn
+                        ? "No players available."
+                        : "Waiting for other teams to pick..."}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
